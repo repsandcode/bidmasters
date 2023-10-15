@@ -61,6 +61,10 @@
 
       <!-- SHOW CURRENT BID and WINNER -->
       <div class="mb-lg-5">
+        {% if highest_bid == None %}
+        <p class="fs-4 mt-5 pt-5 mb-0">Starting bid</p>
+        <span class="fs-1 fw-medium">$ {{ listing.starting_bid }}</span>
+        {% else %}
         {% if listing.is_active %}
         {% if highest_bid.bidder == user %}
         <h3>You are the highest bidder!</h3>
@@ -71,21 +75,23 @@
         </p>
         {% endif %}
         {% else %}
+        {% if highest_bid.bidder == user %}
+        <h3>You won the auction!</h3>
+        {% endif %}
         {% if listing.seller == user %}
         <h3>You closed this listing.</h3>
         <p class="fs-4 mt-5 my-0 py-0">
           <span class="fw-medium beige-dark">{{ highest_bid.bidder}}</span>
           won this auction!
         </p>
-        {% elif highest_bid.bidder == user %}
-        <h3>You won the auction!</h3>
         {% endif %}
         {% endif %}
-
-        <span class="fs-1 fw-medium">$ {{ listing.current_bid }}</span>
+        <span class="fs-1 fw-medium">$ {{ highest_bid.bid_amount }}</span>
+        {% endif %}
       </div>
 
       <!-- PLACE BID -->
+      {% if not listing.seller == user %}
       <div class="d-none d-lg-block">
         {% if listing.is_active %}
         {% for message in messages %}
@@ -105,6 +111,7 @@
         </form>
         {% endif %}
       </div>
+      {% endif %}
     </div>
   </div>
 </div>
@@ -113,6 +120,7 @@
   <!-- PLACE BID and BID HISTORY -->
   <div class="col-md-6 col-lg-5 order-md-1">
     <div class="px-0 ms-md-5 ps-lg-5 mb-5 list">
+      {% if not listing.seller == user %}
       <div class="d-block d-lg-none mb-5 pb-5">
         {% if listing.is_active %}
         {% for message in messages %}
@@ -132,6 +140,7 @@
         </form>
         {% endif %}
       </div>
+      {% endif %}
 
       <h2>Bid History</h2>
       <ul class="list-group mt-5 overflow-auto bid-history">
@@ -145,7 +154,12 @@
             <p class="fs-3 fw-medium mb-1 align-self-center">$ {{ bid.bid_amount }}</p>
           </div>
         </li>
+        {% empty %}
+        <li class="list-group-item border-0 mb-4 px-0">
+          <p class="fs-4 mb-1">No bids yet</p>
+        </li>
         {% endfor %}
+
       </ul>
     </div>
   </div>

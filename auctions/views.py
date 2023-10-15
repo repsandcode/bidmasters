@@ -94,8 +94,16 @@ def listing(request, listing_id):
     if request.user.is_authenticated:
         try:
             listing = Listing.objects.get(id=listing_id)
+
+            if listing.bids.all().first() == None:
+                listing.current_bid = listing.starting_bid
+            else: 
+                listing.current_bid = listing.bids.all().last().bid_amount
+            
+            listing.save()
         except Listing.DoesNotExist:
             return HttpResponseBadRequest("Listing not found.")
+
 
         return render(request, "auctions/listing.html", {
             "listing": listing,
