@@ -1,0 +1,36 @@
+{% extends "auctions/layout.html" %}
+
+{% load static %}
+
+{% block body %}
+
+<h1 class="mt-5 fw-light dark pt-sm-5">Active Listings</h1>
+
+<div class="mt-5">
+    <div class="row g-5">
+        {% for list in active_listings %}
+        <div class="col-sm-6 col-md-4 col-lg-3">
+
+            <a class="text-reset text-decoration-none" href="{% url 'auctions:listing' list.id %}">
+                <div class="card product-card list">
+                    {% if list.image_data %}
+                    <img class="card-image-top object-fit-cover" src="{{ list.image_data }}"
+                        alt="{{ list.description }}">
+                    {% else %}
+                    <img class="card-image-top object-fit-cover" src="{% static 'auctions/images/no_image.png' %}"
+                        alt="Default image">
+                    {% endif %}
+                    <div class="card-body">
+                        <h3 class="fw-normal text-nowrap text-truncate pb-2">{{ list.title }} </h3>
+                        <p class="fw-light fs-5 text-nowrap text-truncate">{{ list.description }}</p>
+                        <p class="fs-2 fw-medium">${{ list.starting_bid }}</p>
+                        <!-- <button class="btn btn-primary">Place Bid</button> -->
+                    </div>
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}

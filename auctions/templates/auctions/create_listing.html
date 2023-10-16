@@ -1,0 +1,65 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+
+<h1 class="my-5 fw-light pt-sm-5">Create a listing</h1>
+
+<form action="{% url 'auctions:create_listing' %}" method="post">
+  {% csrf_token %}
+
+  <!-- TITLE and CATEGORY -->
+  <div class="row">
+    <div class="col-md-6">
+      <div class="mb-5">
+        <label for="title" class="form-label fs-4 mb-2">Title</label>
+        <div class="input-group">
+          {{ form.title }}
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="mb-5">
+        <label for="category" class="form-label fs-4 mb-2">Select category</label>
+        <div class="input-group fs-4">
+          {{ form.category }}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STARTING BID and UPLOAD IMAGE -->
+  <div class="row">
+    <div class="col-md-6">
+      <div class="mb-5">
+        <label for="starting_bid" class="form-label fs-4 mb-2">Starting bid</label>
+        <div class="input-group">
+          <span class="input-group-text fs-5 px-4">$</span>
+          {{ form.starting_bid }}
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="mb-5">
+        <label for="image_data" class="form-label fs-4 mb-2">Upload Image</label>
+        <div class="input-group">
+          <span class="input-group-text fs-5 px-4">Image URL</span>
+          {{ form.image_data }}
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="mb-5">
+    <label for="description" class="form-label fs-4 mb-2">Description</label>
+    <div class="input-group">
+      {{ form.description }}
+    </div>
+  </div>
+
+
+  <input class="create-btn fs-4 float-end mb-5 px-4" type="submit" value="Save and Exit">
+</form>
+{% endblock %}

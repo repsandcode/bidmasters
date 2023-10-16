@@ -1,0 +1,163 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <!-- bootstrap css -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <!-- local css file  -->
+    <link href="{% static 'auctions/styles.css' %}" rel="stylesheet">
+
+    <!-- fontawesome icons -->
+    <script src="https://kit.fontawesome.com/363a78aff8.js" crossorigin="anonymous"></script>
+
+    <title>{% block title %}Auctions{% endblock %}</title>
+</head>
+
+<body>
+    {% block hero %}
+    <div class="container-xl px-4 py-2">
+        <header class="navbar navbar-expand-sm py-4">
+            <div class="w-100 d-flex d-sm-none justify-content-between">
+                <div class="d-sm-none align-self-center px-1" data-bs-toggle="offcanvas"
+                    data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
+                    <span class="fa-solid fa-bars fs-2"></span>
+                </div>
+
+                <div class="">
+                    {% if user.is_authenticated %}
+                    <div></div>
+                    {% else %}
+                    <a class="text-decoration-none text-reset fs-4" href="{% url 'auctions:login' %}">
+                        <button type="button" class="logout-btn">
+                            <i class="fa-solid fa-arrow-right-from-bracket me-2"></i>
+                            Login
+                        </button>
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Site Logo -->
+            <h1 class="navbar-brand mb-0 ms-4 ms-sm-0 py-3 d-none d-sm-block">
+                <a href="{% url 'auctions:index' %}" aria-current="page"
+                    class="text-reset text-decoration-none display-6 fw-normal dark">BidMasters</a>
+            </h1>
+
+            <!-- NAVBAR -->
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <div class="navbar-nav w-100">
+                    <!-- Categories -->
+                    <div class="nav-item align-self-center ms-sm-5 me-sm-4">
+                        <a class="text-decoration-none text-reset fs-4 dark" href="{% url 'auctions:categories' %}">
+                            Categories
+                        </a>
+                    </div>
+                    {% if user.is_authenticated %}
+                    <div class="w-100 d-none d-sm-flex justify-content-sm-between">
+                        <!-- Watchlist -->
+                        <div class="nav-item align-self-center">
+                            <a class="text-decoration-none text-reset fs-4 dark"
+                                href="{% url 'auctions:watchlist' %}">My
+                                Watchlist</a>
+                        </div>
+                        <!-- Create Listing and Logout -->
+                        <div class="d-inline-flex">
+                            <a class="text-decoration-none text-reset align-self-center fs-4 dark"
+                                href="{% url 'auctions:create_listing' %}">
+                                <button type="button" class="nav-item create-btn">
+                                    <i class="fa-solid fa-plus"></i>
+                                </button>
+                            </a>
+                            <a class="text-decoration-none text-reset fs-4" href="{% url 'auctions:logout' %}">
+                                <button type="button" class="nav-item ms-3 logout-btn">
+                                    <i class="fa-solid fa-arrow-right-from-bracket me-2"></i>
+                                    Logout
+                                </button>
+                            </a>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="nav-item w-100">
+                        <a class="text-decoration-none text-reset fs-4" href="{% url 'auctions:login' %}">
+                            <button type="button" class="w-auto logout-btn float-end">
+                                <i class="fa-solid fa-arrow-right-from-bracket me-2"></i>
+                                Login
+                            </button>
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Sidebar for Mobile Menu -->
+            <div class="offcanvas offcanvas-start d-sm-none p-3 sidebar" tabindex="-1" id="offcanvasNavbar"
+                aria-labelledby="offcanvasNavbarLabel">
+                <div class="offcanvas-header">
+                    <h1 class="offcanvas-title display-5 fw-normal" id="offcanvasNavbarLabel dark">BidMasters</h1>
+                    <span class="fa-solid fa-x fs-3" data-bs-dismiss="offcanvas" aria-label="Close"></span>
+                </div>
+                <div class="offcanvas-body">
+                    <ul class="navbar-nav h-100 justify-content-between">
+                        <div class="">
+                            <li class="nav-item my-5">
+                                <a class="text-decoration-none text-reset fs-2 dark" aria-current="page"
+                                    href="{% url 'auctions:index' %}">Home</a>
+                            </li>
+                            <li class="nav-item mb-5">
+                                <a class="text-decoration-none text-reset fs-2 dark"
+                                    href="{% url 'auctions:categories' %}">Categories</a>
+                            </li>
+                            {% if user.is_authenticated %}
+                            <li class="nav-item mb-5">
+                                <a class="text-decoration-none text-reset fs-2 dark"
+                                    href="{% url 'auctions:watchlist' %}">My
+                                    Watchlist</a>
+                            </li>
+                            <li class="nav-item mb-5">
+                                <a class="text-decoration-none text-reset fs-2 dark"
+                                    href="{% url 'auctions:create_listing' %}">Create Listing</a>
+                            </li>
+                        </div>
+                        <li class="nav-item mb-5">
+                            <a class="text-decoration-none text-reset fs-2 dark" href="{% url 'auctions:logout' %}">
+                                <i class="fa-solid fa-arrow-right-from-bracket me-2"></i> Logout</a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </header>
+
+        <!-- signed in as -->
+        <!-- <div>
+            {% if user.is_authenticated %}
+            Hello, <strong>{{ user.username }}</strong>!
+            {% else %}
+            Not signed in.
+            {% endif %}
+        </div> -->
+        {% block body %}
+        {% endblock %}
+    </div>
+    {% endblock %}
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+
+    <script src="{% static 'auctions/main.js' %}"></script>
+</body>
+
+</html>

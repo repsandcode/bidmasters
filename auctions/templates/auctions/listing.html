@@ -1,0 +1,193 @@
+{% extends "auctions/layout.html" %}
+
+{% load static %}
+{% load customize %}
+
+{% block body %}
+
+
+
+<div class="row mt-5 g-0">
+  <!-- IMAGE -->
+  <div class="col-md-6 col-lg-7 mt-3 mt-md-5">
+    <div class="px-0 pe-lg-2">
+      {% if listing.image_data %}
+      <img class="w-100 h-100 object-fit-cover listing-img" src="{{ listing.image_data }}"
+        alt="{{ listing.description }}">
+      {% else %}
+      <img class="w-100 h-100 object-fit-cover listing-img" src="{% static 'auctions/images/no_image.png' %}"
+        alt="Default image">
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- BRIEF BACKGROUND AND PLACE BID -->
+  <div class="col-md-6 col-lg-5 mt-3 mt-md-5">
+    <div class="px-0 ms-md-5 ps-lg-5">
+      <!-- CATEGORY -->
+      <span class="fs-4">{{ listing.category }}</span>
+      <!-- TITLE -->
+      <h1 class="display-6 fw-semibold mt-3 mb-4 text-wrap">{{ listing.title }}</h1>
+      <!-- <span>by {{ listing.seller }}</s  -->
+      <!-- ADD TO WATCHLIST or REMOVE FROM WATCHLIST or CLOSE LISTING -->
+      <div class="mb-5">
+        {% if user != listing.seller %}
+
+        <!-- ADD or REMOVE for user who is not the seller  -->
+        {% if not in_watchlist %}
+        <form action="{% url 'auctions:add_to_watchlist' listing.id %}" method="POST">
+          {% csrf_token %}
+          <input class="fs-5 fw-medium update-listing-btn" type="submit" value="Add to Watchlist">
+        </form>
+        {% else %}
+        <form action="{% url 'auctions:remove_from_watchlist' listing.id %}" method="POST">
+          {% csrf_token %}
+          <input class="fs-5 fw-medium update-listing-btn" type="submit" value="Remove from Watchlist">
+        </form>
+        {% endif %}
+
+        {% else %}
+
+        <!-- CLOSE the bidding -->
+        {% if listing.is_active %}
+        <a class="text-reset text-decoration-none" href="{% url 'auctions:close_listing' listing.id %}">
+          <button class="fs-5 fw-medium update-listing-btn border">Close Listing</button>
+        </a>
+        </button>
+        {% endif %}
+
+        {% endif %}
+      </div>
+
+      <!-- SHOW CURRENT BID and WINNER -->
+      <div class="mb-lg-5">
+        {% if listing.is_active %}
+        {% if highest_bid.bidder == user %}
+        <h3>You are the highest bidder!</h3>
+        {% else %}
+        <p class="fs-4 mb-0">
+          Highest bid by
+          <span class="fw-medium beige-dark">{{ highest_bid.bidder}}</span>
+        </p>
+        {% endif %}
+        {% else %}
+        {% if listing.seller == user %}
+        <h3>You closed this listing.</h3>
+        <p class="fs-4 mt-5 my-0 py-0">
+          <span class="fw-medium beige-dark">{{ highest_bid.bidder}}</span>
+          won this auction!
+        </p>
+        {% elif highest_bid.bidder == user %}
+        <h3>You won the auction!</h3>
+        {% endif %}
+        {% endif %}
+
+        <span class="fs-1 fw-medium">$ {{ listing.current_bid }}</span>
+      </div>
+
+      <!-- PLACE BID -->
+      <div class="d-none d-lg-block">
+        {% if listing.is_active %}
+        {% for message in messages %}
+        <script>
+          alert("{{ message }}");
+        </script>
+        {% endfor %}
+
+        <form action="{% url 'auctions:place_bid' listing.id %}" method="POST" id="bidForm">
+          {% csrf_token %}
+          <div class="w-100">
+            <input class="w-100 p-4 fs-4 mb-3 place-bid-input" type="number" inputmode="numeric" name="bid" id="bid"
+              min="{{ listing.starting_bid }}" max="999 999 999 999" step="0.10"
+              placeholder="$ {{ listing.current_bid }} or more" aria-describedby="place-bid" required>
+            <button class="w-100 p-3 fs-4 place-bid-btn text-uppercase" type="submit">Place bid</button>
+          </div>
+        </form>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row mt-5 g-0">
+  <!-- PLACE BID and BID HISTORY -->
+  <div class="col-md-6 col-lg-5 order-md-1">
+    <div class="px-0 ms-md-5 ps-lg-5 mb-5 list">
+      <div class="d-block d-lg-none mb-5 pb-5">
+        {% if listing.is_active %}
+        {% for message in messages %}
+        <script>
+          alert("{{ message }}");
+        </script>
+        {% endfor %}
+
+        <form action="{% url 'auctions:place_bid' listing.id %}" method="POST" id="bidForm">
+          {% csrf_token %}
+          <div class="w-100">
+            <input class="w-100 p-4 fs-4 mb-3 place-bid-input" type="number" inputmode="numeric" name="bid" id="bid"
+              min="{{ listing.starting_bid }}" max="999 999 999 999" step="0.10"
+              placeholder="$ {{ listing.current_bid }} or more" aria-describedby="place-bid" required>
+            <button class="w-100 p-3 fs-4 place-bid-btn text-uppercase" type="submit">Place bid</button>
+          </div>
+        </form>
+        {% endif %}
+      </div>
+
+      <h2>Bid History</h2>
+      <ul class="list-group mt-5 overflow-auto bid-history">
+        {% for bid in all_bids %}
+        <li class="list-group-item border-0 mb-4 px-0">
+          <div class="mb-2 d-flex w-100 justify-content-between">
+            <div class="">
+              <p class="fs-4 mb-1">Bid placed by {{ bid.bidder }} </p>
+              <span class="fs-5 text-body-secondary">{{ bid.bid_time|time_ago }} ago</span>
+            </div>
+            <p class="fs-3 fw-medium mb-1 align-self-center">$ {{ bid.bid_amount }}</p>
+          </div>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+
+  <!-- DESCRIPTION and COMMENTS -->
+  <div class="col-md-6 col-lg-7">
+    <div class="px-0 pe-lg-2">
+      <!-- DESCRIPTION -->
+      <div class="mx-0">
+        <h2 class="mb-4 px-0">Description</h2>
+        <p class="mb-0 fw-light fs-4 px-0 mb-5">{{listing.description}}</p>
+      </div>
+
+      <!-- COMMENT -->
+      <div class="pt-5 mt-5 mx-0">
+        <h2 class="mb-4 px-0">Comments</h2>
+        <!-- ADD COMMENT -->
+        <form action="{% url 'auctions:comment' listing.id %}" method="POST" class="px-0 pb-5">
+          {% csrf_token %}
+          <textarea class="w-100 fs-4 py-1 comment-box" name="comment" id="comment" placeholder="Add a comment"
+            aria-label="comment" rows="1" required></textarea>
+          <button type="submit" class="fs-4 float-end create-btn">Post comment</button>
+        </form>
+
+        <!-- COMMENTS -->
+        <ul class="list-group mt-5 overflow-auto comment-history">
+          {% for comment in all_comments %}
+          <li class="list-group-item border-0 mb-4 px-0">
+            <div class="mb-2 d-flex w-100 justify-content-between">
+              <h4 class="mb-1"> {{ comment.commenter }} </h4>
+              <small class="fs-5 text-body-secondary">{{ comment.comment_time|time_ago }} ago</small>
+            </div>
+            <p class="fs-4 fw-light mb-1">{{ comment.comment }}</p>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+{% endblock %}
