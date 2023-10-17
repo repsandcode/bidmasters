@@ -27,7 +27,7 @@
       <!-- CATEGORY -->
       <span class="fs-4">{{ listing.category }}</span>
       <!-- TITLE -->
-      <h1 class="display-6 fw-semibold mt-3 mb-4 text-wrap">{{ listing.title }}</h1>
+      <h1 class="display-6 fw-semibold mt-2 mb-4 text-wrap">{{ listing.title }}</h1>
       <!-- <span>by {{ listing.seller }}</s  -->
       <!-- ADD TO WATCHLIST or REMOVE FROM WATCHLIST or CLOSE LISTING -->
       <div class="mb-5">
@@ -60,7 +60,7 @@
       </div>
 
       <!-- SHOW CURRENT BID and WINNER -->
-      <div class="mb-lg-5">
+      <div class="">
         {% if highest_bid == None %}
         <p class="fs-4 mt-5 pt-5 mb-0">Starting bid</p>
         <span class="fs-1 fw-medium">$ {{ listing.starting_bid }}</span>
@@ -92,13 +92,22 @@
 
       <!-- PLACE BID -->
       {% if not listing.seller == user %}
-      <div class="d-none d-lg-block">
+      <div class="d-none d-md-block">
         {% if listing.is_active %}
-        {% for message in messages %}
-        <script>
-          alert("{{ message }}");
-        </script>
-        {% endfor %}
+        <div class="error-bid-div">
+          {% for message in messages %}
+          <div
+            class="alert alert-dismissible fade show fs-5 fw-medium w-100 px-3 py-0 m-0 d-flex justify-content-between error-bid-box"
+            role="alert">
+            <span class="align-self-center">
+              {{ message }}
+            </span>
+            <button type="button" class="close border-0 bg-transparent" data-bs-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true" class="dark fs-3">&times;</span>
+            </button>
+          </div>
+          {% endfor %}
+        </div>
 
         <form action="{% url 'auctions:place_bid' listing.id %}" method="POST" id="bidForm">
           {% csrf_token %}
@@ -116,18 +125,27 @@
   </div>
 </div>
 
-<div class="row mt-5 g-0">
+<div class="row mt-sm-3 mt-md-5 g-0">
   <!-- PLACE BID and BID HISTORY -->
   <div class="col-md-6 col-lg-5 order-md-1">
     <div class="px-0 ms-md-5 ps-lg-5 mb-5 list">
       {% if not listing.seller == user %}
-      <div class="d-block d-lg-none mb-5 pb-5">
+      <div class="d-block d-md-none mb-5 pb-5">
         {% if listing.is_active %}
-        {% for message in messages %}
-        <script>
-          alert("{{ message }}");
-        </script>
-        {% endfor %}
+        <div class="error-bid-div">
+          {% for message in messages %}
+          <div
+            class="alert alert-dismissible fade show fs-5 fw-medium w-100 px-3 py-0 m-0 d-flex justify-content-between error-bid-box"
+            role="alert">
+            <span class="align-self-center">
+              {{ message }}
+            </span>
+            <button type="button" class="close border-0 bg-transparent" data-bs-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true" class="dark fs-3">&times;</span>
+            </button>
+          </div>
+          {% endfor %}
+        </div>
 
         <form action="{% url 'auctions:place_bid' listing.id %}" method="POST" id="bidForm">
           {% csrf_token %}

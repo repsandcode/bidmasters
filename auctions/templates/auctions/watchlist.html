@@ -19,9 +19,12 @@
           <img class="card-image-top object-fit-cover" src="{% static 'auctions/images/no_image.png' %}"
             alt="Default image">
           {% endif %}
-          <div class="card-body">
-            <h3 class="fw-normal text-nowrap text-truncate">{{ list.title }} </h3>
-            <p class="fs-2 fw-medium">${{ list.starting_bid }}</p>
+          <div class="card-body list-body">
+            <h3 class="fw-normal text-nowrap text-truncate pb-2 m-0">{{ list.title }} </h3>
+            <p class="fw-light fs-5 text-nowrap text-truncate">{{ list.description }}</p>
+            <p class="fs-4 fw-light m-0">Bid now at
+              <span class="fs-3 fw-medium">${{ list.current_bid}}</span>
+            </p>
             <!-- <button class="btn btn-primary">Place Bid</button> -->
           </div>
         </div>
